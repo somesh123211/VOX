@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoxNova - Deaf Mode</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
+  color: #e2e8f0;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header Styles */
+header {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  color: #60a5fa;
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+}
+
+.logo h1 {
+  color: #f1f5f9;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+nav a:hover {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.1);
+  border-left: 3px solid #60a5fa;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+/* Back Button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 12px 20px;
+  margin: 2rem 0;
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  color: #60a5fa;
+  border-left: 3px solid #60a5fa;
+  box-shadow: 0 6px 16px rgba(96, 165, 250, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Main Content */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.box {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4b5563;
+}
+
+.box h2 {
+  color: #f1f5f9;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.4rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.box h2 i {
+  color: #60a5fa;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+
+/* Microphone Button */
+.mic-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 3px solid #475569;
+  color: #60a5fa;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left: 4px solid transparent;
+}
+
+.mic-btn:hover {
+  border-left: 4px solid #60a5fa;
+  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #334155, #1e293b);
+}
+
+.mic-btn.active {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  border-color: #ef4444;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Language Selector */
+.language-selector {
+  margin-bottom: 1rem;
+}
+
+.language-selector label {
+  display: block;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.language-selector select {
+  width: 100%;
+  padding: 12px;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-left: 4px solid transparent;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.language-selector select:focus {
+  outline: none;
+  border-left: 4px solid #60a5fa;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+/* Textarea */
+textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-left: 4px solid transparent;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+textarea:focus {
+  outline: none;
+  border-left: 4px solid #60a5fa;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+textarea::placeholder {
+  color: #64748b;
+}
+
+/* Buttons */
+.btn {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid transparent;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  border-left: 3px solid #60a5fa;
+  box-shadow: 0 6px 16px rgba(96, 165, 250, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  color: #cbd5e1;
+  border: 2px solid #475569;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+  border-left: 3px solid #60a5fa;
+  box-shadow: 0 6px 16px rgba(96, 165, 250, 0.2);
+  color: #e2e8f0;
+}
+
+/* Status and Output */
+.status {
+  background: #1e293b;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 1rem 0;
+  color: #cbd5e1;
+  border-left: 4px solid #475569;
+  font-weight: 500;
+}
+
+.output {
+  background: #0f172a;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 1rem;
+  color: #e2e8f0;
+  border-left: 4px solid #334155;
+  min-height: 60px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Info Panel */
+.info-panel {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4b5563;
+}
+
+.info-panel h3 {
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.2rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.info-panel h3 i {
+  color: #60a5fa;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+}
+
+.info-panel p {
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.feature-list {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.feature-list li {
+  color: #cbd5e1;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feature-list li i {
+  color: #10b981;
+  font-size: 1.1rem;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 3rem 0 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid #4b5563;
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.footer-content p {
+  color: #cbd5e1;
+  margin-bottom: 2rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.footer-links a:hover {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.1);
+  border-left: 3px solid #60a5fa;
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+}
+
+.copyright {
+  color: #64748b;
+  font-size: 0.9rem;
+  padding-top: 1rem;
+  border-top: 1px solid #374151;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  nav ul {
+    gap: 1rem;
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .box {
+    padding: 1.5rem;
+  }
+  
+  .info-panel {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .box {
+    padding: 1rem;
+  }
+  
+  .info-panel {
+    padding: 1rem;
+  }
+  
+  .mic-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 1.5rem;
+  }
+}
+</style>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fas fa-hands logo-icon"></i>
+        <h1>VoxNova</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="main-content">
+      <!-- Speech to Text Box -->
+      <div class="box">
+        <h2><i class="fas fa-microphone"></i> Speech to Text</h2>
+        <button class="mic-btn" id="micButton">
+          <i class="fas fa-microphone"></i>
+        </button>
+        <div class="status" id="status">Press the microphone to start speaking...</div>
+        <button class="btn btn-secondary" onclick="clearSttText()">
+          <i class="fas fa-trash-alt"></i> Clear Text
+        </button>
+        <div class="output" id="sttOutput">
+          <i class="fas fa-info-circle"></i> Your speech will appear here as text.
+        </div>
+      </div>
+      
+      <!-- Text to Speech Box -->
+      <div class="box">
+        <h2><i class="fas fa-volume-up"></i> Text to Speech</h2>
+        
+        <div class="language-selector">
+          <label for="languageSelect">Select Language:</label>
+          <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="mr">Marathi</option>
+          </select>
+        </div>
+        
+        <textarea id="textInput" placeholder="Type your message here..."></textarea>
+        <button class="btn" onclick="convertToSpeech()">
+          <i class="fas fa-play"></i> Convert to Speech
+        </button>
+        <button class="btn btn-secondary" onclick="clearTtsText()">
+          <i class="fas fa-trash-alt"></i> Clear Text
+        </button>
+        <div class="output" id="ttsOutput">
+          <i class="fas fa-info-circle"></i> Your converted speech will appear here.
+        </div>
+      </div>
+    </div>
+    
+    <!-- Info Panel -->
+    <div class="info-panel">
+      <h3><i class="fas fa-lightbulb"></i> How to Use Deaf Mode</h3>
+      <p>This mode helps people who are deaf or hard of hearing by converting speech to text and text to speech with multiple language support.</p>
+      
+      <h3><i class="fas fa-star"></i> Features</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Real-time speech recognition</li>
+        <li><i class="fas fa-check-circle"></i> Text-to-speech conversion</li>
+        <li><i class="fas fa-check-circle"></i> Multiple language support (English, Hindi, Marathi)</li>
+        <li><i class="fas fa-check-circle"></i> Easy language switching</li>
+        <li><i class="fas fa-check-circle"></i> Copy to clipboard functionality</li>
+      </ul>
+      
+      <h3><i class="fas fa-cog"></i> Tips for Best Results</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Speak clearly and at a moderate pace</li>
+        <li><i class="fas fa-check-circle"></i> Reduce background noise when using microphone</li>
+        <li><i class="fas fa-check-circle"></i> Use punctuation in text for better speech synthesis</li>
+        <li><i class="fas fa-check-circle"></i> Keep the microphone close to your mouth</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-logo">VoxNova</div>
+      <p>Breaking down communication barriers with AI technology</p>
+      
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Support</a>
+      </div>
+      
+      <div class="copyright">
+        &copy; 2023 VoxNova. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Text to Speech functionality
+    function convertToSpeech() {
+      const text = document.getElementById("textInput").value;
+      const output = document.getElementById("ttsOutput");
+      const languageSelect = document.getElementById("languageSelect");
+      const selectedLanguage = languageSelect.value;
+
+      if (text.trim() === "") {
+        output.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please enter some text.';
+        return;
+      }
+
+      // Show text in output box
+      output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${text}"`;
+
+      // Use browser TTS
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Set language based on selection
+      if (selectedLanguage === "hi") {
+        utterance.lang = "hi-IN";
+        output.innerHTML += "<br><i class='fas fa-language'></i> Language: Hindi";
+      } else if (selectedLanguage === "mr") {
+        utterance.lang = "mr-IN";
+        output.innerHTML += "<br><i class='fas fa-language'></i> Language: Marathi";
+      } else {
+        utterance.lang = "en-US";
+        output.innerHTML += "<br><i class='fas fa-language'></i> Language: English";
+      }
+      
+      // Set up event listeners for speech events
+      utterance.onstart = function() {
+        output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${text}"`;
+        if (selectedLanguage === "hi") {
+          output.innerHTML += "<br><i class='fas fa-language'></i> Language: Hindi";
+        } else if (selectedLanguage === "mr") {
+          output.innerHTML += "<br><i class='fas fa-language'></i> Language: Marathi";
+        } else {
+          output.innerHTML += "<br><i class='fas fa-language'></i> Language: English";
+        }
+      };
+      
+      utterance.onend = function() {
+        output.innerHTML += `<br><i class="fas fa-check-circle" style="color: var(--success);"></i> Finished speaking`;
+      };
+      
+      speechSynthesis.speak(utterance);
+    }
+    
+    function clearTtsText() {
+      document.getElementById("textInput").value = "";
+      document.getElementById("ttsOutput").innerHTML = '<i class="fas fa-info-circle"></i> Your converted speech will appear here.';
+    }
+    
+    // Speech to Text functionality
+    const micButton = document.getElementById("micButton");
+    const status = document.getElementById("status");
+    const sttOutput = document.getElementById("sttOutput");
+
+    let recognition;
+    let isListening = false;
+
+    // Initialize speech recognition
+    function initSpeechRecognition() {
+      if ("webkitSpeechRecognition" in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = "en-US";
+        
+        recognition.onstart = function() {
+          isListening = true;
+          micButton.classList.add("active");
+          status.innerHTML = "<i class='fas fa-circle' style='color: var(--error);'></i> Listening...";
+        };
+        
+        recognition.onresult = function(event) {
+          let transcript = "";
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          sttOutput.innerHTML = transcript;
+        };
+        
+        recognition.onerror = function(event) {
+          status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error: " + event.error;
+        };
+        
+        recognition.onend = function() {
+          isListening = false;
+          micButton.classList.remove("active");
+          status.innerHTML = "Press the microphone to start speaking...";
+        };
+      } else {
+        status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Your browser does not support Speech Recognition. Try Chrome or Edge.";
+        micButton.disabled = true;
+      }
+    }
+
+    // Toggle speech recognition
+    micButton.addEventListener("click", () => {
+      if (!recognition) return;
+      
+      if (!isListening) {
+        recognition.start();
+      } else {
+        recognition.stop();
+      }
+    });
+
+    // Clear speech to text
+    function clearSttText() {
+      sttOutput.innerHTML = '<i class="fas fa-info-circle"></i> Your speech will appear here as text.';
+      status.innerHTML = "Press the microphone to start speaking...";
+    }
+
+    // Initialize on page load
+    window.addEventListener('load', initSpeechRecognition);
+    
+    // Add keyboard shortcut (Ctrl+Enter to convert text to speech)
+    document.addEventListener('DOMContentLoaded', function() {
+      const textInput = document.getElementById("textInput");
+      if (textInput) {
+        textInput.addEventListener("keydown", function(e) {
+          if (e.ctrlKey && e.key === "Enter") {
+            convertToSpeech();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

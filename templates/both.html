@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoxNova - Both Mode</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
+  color: #e2e8f0;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 15px 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ec4899, #be185d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-icon {
+  font-size: 32px;
+  color: #ec4899;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #cbd5e1;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+nav a:after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: #ec4899;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+nav a:hover {
+  color: #ec4899;
+}
+
+nav a:hover:after {
+  width: 100%;
+}
+
+/* Back Button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #374151, #1f2937);
+  color: #ec4899;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin: 20px 0;
+}
+
+.back-btn:hover {
+  background: #ec4899;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+}
+
+/* Main Content */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin: 30px 0;
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Column - TTS and STT */
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Box Styling */
+.box {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.box h2 {
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.box h2 i {
+  color: #ec4899;
+}
+
+/* Text Input */
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  font-size: 15px;
+  resize: none;
+  margin-bottom: 15px;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+}
+
+/* Buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #be185d, #e91e63);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  border-left: 3px solid transparent;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #ec4899, #be185d);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(236, 72, 153, 0.2);
+  border-left: 3px solid #f472b6;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  color: #ec4899;
+  border: 2px solid #475569;
+}
+
+.btn-secondary:hover {
+  background: rgba(236, 72, 153, 0.05);
+  border-left: 3px solid #ec4899;
+}
+
+/* Microphone button */
+.mic-btn {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ec4899;
+  color: white;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  margin: 15px auto;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.3);
+  border-left: 4px solid transparent;
+}
+
+.mic-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+  border-left: 4px solid #f472b6;
+}
+
+.mic-btn.active {
+  background: #ef4444;
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Status text */
+.status {
+  margin: 10px 0;
+  font-size: 15px;
+  color: #cbd5e1;
+  min-height: 24px;
+  text-align: center;
+}
+
+/* Output area */
+.output {
+  margin-top: 15px;
+  padding: 15px;
+  background: #0f172a;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #e2e8f0;
+  min-height: 80px;
+  border-left: 4px solid #ec4899;
+}
+
+/* Right Column - Sign Recognition */
+.sign-recognition {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.sign-recognition h2 {
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.sign-recognition h2 i {
+  color: #ec4899;
+}
+
+.video-container {
+  position: relative;
+  display: inline-block;
+  margin: 15px 0;
+}
+
+video {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.sign-output {
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #e2e8f0;
+  background: #0f172a;
+  padding: 12px 15px;
+  border-radius: 10px;
+  display: inline-block;
+  min-width: 180px;
+  border-left: 4px solid #ec4899;
+}
+
+/* Info Panel */
+.info-panel {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin-top: 20px;
+}
+
+.info-panel h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-panel h3 i {
+  color: #be185d;
+}
+
+.info-panel p {
+  color: #cbd5e1;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.feature-list {
+  list-style: none;
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: #cbd5e1;
+}
+
+.feature-list li i {
+  color: #10b981;
+  font-size: 14px;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  color: white;
+  padding: 40px 0 20px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #ec4899, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+}
+
+.footer-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.copyright {
+  margin-top: 25px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+</style>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fas fa-hands logo-icon"></i>
+        <h1>VoxNova</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#">Features</a></li>
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="main-content">
+      <!-- Left Column - TTS and STT -->
+      <div class="left-column">
+        <!-- Text to Speech Box -->
+        <div class="box">
+          <h2><i class="fas fa-volume-up"></i> Text to Speech</h2>
+          <textarea id="textInput" placeholder="Type your message here..."></textarea>
+          <button class="btn" onclick="convertToSpeech()">
+            <i class="fas fa-play"></i> Convert to Speech
+          </button>
+          <button class="btn btn-secondary" onclick="clearTtsText()">
+            <i class="fas fa-trash-alt"></i> Clear Text
+          </button>
+          <div class="output" id="ttsOutput">
+            <i class="fas fa-info-circle"></i> Your converted speech will appear here.
+          </div>
+        </div>
+        
+        <!-- Speech to Text Box -->
+        <div class="box">
+          <h2><i class="fas fa-microphone"></i> Speech to Text</h2>
+          <button class="mic-btn" id="micButton">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <div class="status" id="status">Press the microphone to start speaking...</div>
+          <button class="btn btn-secondary" onclick="clearSttText()">
+            <i class="fas fa-trash-alt"></i> Clear Text
+          </button>
+          <div class="output" id="sttOutput">
+            <i class="fas fa-info-circle"></i> Your speech will appear here as text.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column - Sign Recognition -->
+      <div class="sign-recognition">
+        <h2><i class="fas fa-sign-language"></i> Sign Recognition for Both Mode</h2>
+        <p>Point your camera, and VoxNova will translate your signs and speech (Demo Mode)</p>
+        
+        <div class="video-container">
+          <video id="camera" autoplay playsinline></video>
+        </div>
+        
+        <div class="sign-output" id="signOutput">Waiting for input...</div>
+        
+        <button class="btn btn-secondary" onclick="toggleCamera()" id="cameraToggle">
+          <i class="fas fa-camera"></i> Enable Camera
+        </button>
+      </div>
+    </div>
+    
+    <!-- Info Panel -->
+    <div class="info-panel">
+      <h3><i class="fas fa-lightbulb"></i> How to Use Both Mode</h3>
+      <p>This mode combines Text-to-Speech and Speech-to-Text functionality, allowing for two-way communication between people with different abilities.</p>
+      
+      <h3><i class="fas fa-star"></i> Features</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Real-time speech recognition</li>
+        <li><i class="fas fa-check-circle"></i> High-quality text-to-speech</li>
+        <li><i class="fas fa-check-circle"></i> Sign language recognition</li>
+        <li><i class="fas fa-check-circle"></i> Two-way communication bridge</li>
+        <li><i class="fas fa-check-circle"></i> Support for multiple languages</li>
+        <li><i class="fas fa-check-circle"></i> Copy to clipboard functionality</li>
+      </ul>
+      
+      <h3><i class="fas fa-cog"></i> Tips for Best Results</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Speak clearly and at a moderate pace</li>
+        <li><i class="fas fa-check-circle"></i> Reduce background noise when using microphone</li>
+        <li><i class="fas fa-check-circle"></i> Use punctuation in text for better speech synthesis</li>
+        <li><i class="fas fa-check-circle"></i> Keep the microphone close to your mouth</li>
+        <li><i class="fas fa-check-circle"></i> Ensure good lighting for sign recognition</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-logo">VoxNova</div>
+      <p>Breaking down communication barriers with AI technology</p>
+      
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Support</a>
+      </div>
+      
+      <div class="copyright">
+        &copy; 2025 VoxNova. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // --- Text-to-Speech ---
+  function convertToSpeech() {
+    const text = document.getElementById("textInput").value;
+    const output = document.getElementById("ttsOutput");
+    if (!text.trim()) {
+      output.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please enter some text.';
+      return;
+    }
+    output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${text}"`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.onend = () => {
+      output.innerHTML += `<br><i class="fas fa-check-circle" style="color: green;"></i> Finished speaking`;
+    };
+    speechSynthesis.speak(utterance);
+  }
+
+  function clearTtsText() {
+    document.getElementById("textInput").value = "";
+    document.getElementById("ttsOutput").innerHTML = '<i class="fas fa-info-circle"></i> Your converted speech will appear here.';
+  }
+
+  // --- Speech-to-Text ---
+  const micButton = document.getElementById("micButton");
+  const status = document.getElementById("status");
+  const sttOutput = document.getElementById("sttOutput");
+  let recognition, isListening = false;
+
+  if ("webkitSpeechRecognition" in window) {
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => {
+      isListening = true;
+      micButton.classList.add("active");
+      status.innerHTML = "<i class='fas fa-circle' style='color: red;'></i> Listening...";
+    };
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      sttOutput.innerHTML = transcript;
+    };
+
+    recognition.onerror = (event) => {
+      status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error: " + event.error;
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      micButton.classList.remove("active");
+      status.innerHTML = "Press the microphone to start speaking...";
+    };
+
+    micButton.addEventListener("click", () => {
+      if (!isListening) recognition.start();
+      else recognition.stop();
+    });
+  } else {
+    status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Speech recognition not supported.";
+    micButton.disabled = true;
+  }
+
+  function clearSttText() {
+    sttOutput.innerHTML = '<i class="fas fa-info-circle"></i> Your speech will appear here as text.';
+    status.innerHTML = "Press the microphone to start speaking...";
+  }
+
+  // --- Sign Recognition ---
+  const video = document.getElementById("camera");
+  const signOutput = document.getElementById("signOutput");
+  const cameraToggle = document.getElementById("cameraToggle");
+  let cameraEnabled = false, recognitionInterval;
+
+  function toggleCamera() {
+    if (cameraEnabled) {
+      // Stop camera
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+        video.srcObject = null;
+      }
+      cameraEnabled = false;
+      cameraToggle.innerHTML = '<i class="fas fa-camera"></i> Enable Camera';
+      signOutput.innerText = "Camera disabled";
+      clearInterval(recognitionInterval);
+    } else {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+          video.srcObject = stream;
+          cameraEnabled = true;
+          cameraToggle.innerHTML = '<i class="fas fa-times"></i> Disable Camera';
+          signOutput.innerText = "Camera enabled - recognizing signs";
+
+          // Send frames to backend every 1 sec
+          recognitionInterval = setInterval(sendFrame, 1000);
+        })
+        .catch(err => {
+          console.error("Camera access denied:", err);
+          signOutput.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please enable camera access';
+        });
+    }
+  }
+
+  function sendFrame() {
+    if (!cameraEnabled || video.readyState < 2) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(blob => {
+      const formData = new FormData();
+      formData.append("frame", blob, "frame.jpg");
+
+      // Send frame to Flask backend
+      fetch("/sign_to_text", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.word) {
+          signOutput.innerHTML = `<i class="fas fa-hands"></i> Recognized: ${data.word}`;
+
+          // Optional: speak recognized word
+          const utterance = new SpeechSynthesisUtterance(data.word);
+          utterance.lang = "en-US";
+          speechSynthesis.speak(utterance);
+        } else {
+          signOutput.innerHTML = "Prediction failed";
+        }
+      })
+      .catch(err => {
+        console.error("Backend error:", err);
+        signOutput.innerHTML = "Error connecting to backend";
+      });
+    }, "image/jpeg");
+  }
+
+  // --- Keyboard shortcut Ctrl+Enter for TTS ---
+  document.addEventListener("DOMContentLoaded", function() {
+    const textInput = document.getElementById("textInput");
+    if (textInput) {
+      textInput.addEventListener("keydown", function(e) {
+        if (e.ctrlKey && e.key === "Enter") {
+          convertToSpeech();
+        }
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

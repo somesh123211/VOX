@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech & Text Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+</head>
+<body>
+    <input type="radio" id="showRegister" name="mode" checked>
+    <input type="radio" id="showLogin" name="mode">
+
+    <div class="main-container">
+        <div class="forms-section">
+            <div class="forms-wrapper">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h1 class="form-title">Get Started</h1>
+                        <p class="form-subtitle">Create your account to access speech and text assistance tools designed to make communication easier.</p>
+                    </div>
+
+                    <form action="#" method="POST">
+                        <div class="field">
+                            <label class="field-label" for="fullName">
+                                Your Name <span class="required-mark">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                class="field-input" 
+                                placeholder="Enter your full name" 
+                                required 
+                                minlength="2"
+                            >
+                        </div>
+
+                        <div class="field-row">
+                            <div class="field age-field">
+                                <label class="field-label" for="age">
+                                    Age <span class="required-mark">*</span>
+                                </label>
+                                <input 
+                                    type="number" 
+                                    id="age" 
+                                    name="age" 
+                                    class="field-input" 
+                                    placeholder="Age" 
+                                    min="13" 
+                                    max="120" 
+                                    required
+                                >
+                            </div>
+                            <div class="field">
+                                <label class="field-label" for="email">
+                                    Email Address <span class="required-mark">*</span>
+                                </label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="field-input" 
+                                    placeholder="your.email@example.com" 
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label" for="address">Address</label>
+                            <textarea 
+                                id="address" 
+                                name="address" 
+                                class="field-input field-textarea" 
+                                placeholder="Your address (optional)"
+                            ></textarea>
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label">
+                                How can we help you? <span class="required-mark">*</span>
+                            </label>
+                            <div class="options-group">
+                                <div class="option-item">
+                                    <input type="checkbox" id="hearing" name="needs[]" value="hearing">
+                                    <label for="hearing">I need help with hearing/listening</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="speaking" name="needs[]" value="speaking">
+                                    <label for="speaking">I need help with speaking/voice</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="both" name="needs[]" value="both">
+                                    <label for="both">I need help with both hearing and speaking</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label" for="work">What do you do?</label>
+                            <input 
+                                type="text" 
+                                id="work" 
+                                name="profession" 
+                                class="field-input" 
+                                placeholder="Your work or studies (optional)"
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label" for="password">
+                                Create Password <span class="required-mark">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="field-input" 
+                                placeholder="Choose a secure password" 
+                                required 
+                                minlength="8"
+                            >
+                        </div>
+                        <div id="successMessage" class="success-message">
+                            🎉 Registration Successful!
+                        </div>
+                        <button type="submit" class="submit-btn">Create Account</button>
+                    </form>
+                </div>
+                <div class="form-container">
+                    <div class="form-header">
+                        <h1 class="form-title">Welcome Back</h1>
+                        <p class="form-subtitle">Sign in to continue using your communication tools and saved preferences.</p>
+                    </div>
+
+                    <form action="#" method="POST">
+                        <div class="field">
+                            <label class="field-label" for="loginEmail">
+                                Email Address <span class="required-mark">*</span>
+                            </label>
+                            <input 
+                                type="email" 
+                                id="loginEmail" 
+                                name="email" 
+                                class="field-input" 
+                                placeholder="your.email@example.com" 
+                                required
+                            >
+                        </div>
+
+                        <div class="field">
+                            <label class="field-label" for="loginPassword">
+                                Password <span class="required-mark">*</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                id="loginPassword" 
+                                name="password" 
+                                class="field-input" 
+                                placeholder="Enter your password" 
+                                required
+                            >
+                        </div>
+
+                        <button type="submit" class="submit-btn">Sign In</button>
+                    </form>
+
+                    <div class="forgot-link">
+                        <a href="#reset">Forgot your password?</a>
+                    </div>
+
+                    <div class="switch-prompt">
+                        <p>Don't have an account yet?</p>
+                        <br>
+                        <label for="showRegister" class="switch-link">Create Account</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-content">
+                <div class="logo-area">
+                    <span class="app-icon">💬</span>
+                    <h2 class="app-title">Communication Helper</h2>
+                    <p class="app-description">
+                        Tools to help you communicate better using voice-to-text and text-to-voice technology.
+                    </p>
+                </div>
+
+                <div class="welcome-register">
+                    <div style="text-align: center; margin-top: 40px;">
+                        <p style="margin-bottom: 20px; font-size: 15px;">Already have an account?</p>
+                        <label for="showLogin" class="switch-link">Sign In</label>
+                    </div>
+                </div>
+
+                <div class="welcome-login">
+                    <div style="text-align: center; margin-top: 40px;">
+                        <p style="margin-bottom: 20px; font-size: 15px;">Need to create an account?</p>
+                        <label for="showRegister" class="switch-link">Get Started</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const registerForm = document.querySelector('.form-container form');
+const successMessage = document.getElementById('successMessage');
+registerForm.addEventListener('submit', function (e) {
+    e.preventDefault(); 
+    successMessage.style.display = "block";
+    registerForm.reset();
+    setTimeout(() => {
+        successMessage.style.display = "none";
+    }, 4000);
+    });
+</script>
+</body>
+</html>

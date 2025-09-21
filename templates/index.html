@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoxNova - Communication Hub</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
+            color: #e5e7eb;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(26, 29, 41, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f59e0b, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+        .nav-links a:hover {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f59e0b, #ec4899);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(55, 65, 81, 0.3) 0%, rgba(31, 41, 55, 0.3) 100%);
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .hero-image {
+          width: 700px;
+          height: 300px;
+          margin: 0 auto 2rem;
+          background-image: url('');
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          border-radius: 15px;
+          filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #f59e0b, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(245, 158, 11, 0.4);
+        }
+        .hero-description {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .step {
+            padding: 2rem 0;
+        }
+        .stepheader {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .stepheader .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f59e0b, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stepheader .description {
+            font-size: 1.1rem;
+            color: #d1d5db;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        .selection-deaf {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .deaf, .selection-item {
+            background: linear-gradient(135deg, rgba(55, 65, 81, 0.4) 0%, rgba(31, 41, 55, 0.4) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(229, 231, 235, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .deaf:hover, .selection-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .content, .selection-content {
+            position: relative;
+            z-index: 2;
+        }
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+        .content h3, .selection-content h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #f59e0b;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .content p, .selection-content p {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .deaf {
+            border-left: 4px solid #3b82f6;
+        }
+        .mute {
+            border-left: 4px solid rgb(77, 124, 77);
+        }
+        .both {
+            border-left: 4px solid #ec4899;
+        }
+        .deaf:hover {
+            border-left-color: #60a5fa;
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+        }
+        .mute:hover {
+            border-left-color: #477842;
+            box-shadow: 0 20px 40px rgba(21, 139, 25, 0.2);
+        }
+        .both:hover {
+            border-left-color: #f472b6;
+            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.2);
+        }
+        .footer {
+            background: linear-gradient(135deg, rgba(26, 29, 41, 0.9) 0%, rgba(45, 27, 61, 0.9) 100%);
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(229, 231, 235, 0.1);
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .footer-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+        .footer-links a:hover {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            transform: translateY(-2px);
+        }
+        .copyright p {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(229, 231, 235, 0.1);
+        }
+        .features {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, rgba(31, 41, 55, 0.3) 0%, rgba(55, 65, 81, 0.3) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.1);
+            border-radius: 20px;
+            margin: 4rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h3 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f59e0b, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .section-title p {
+            font-size: 1.1rem;
+            color: #d1d5db;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, rgba(55, 65, 81, 0.4) 0%, rgba(31, 41, 55, 0.4) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(229, 231, 235, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+            border-left-color: #a78bfa;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .feature-item h4 {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #f59e0b;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-item p {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, rgba(45, 27, 61, 0.3) 0%, rgba(26, 29, 41, 0.3) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(229, 231, 235, 0.1);
+            border-radius: 20px;
+            margin: 4rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .how-it-works .step {
+            background: linear-gradient(135deg, rgba(55, 65, 81, 0.4) 0%, rgba(31, 41, 55, 0.4) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(229, 231, 235, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .how-it-works .step h4 {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #f59e0b;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .how-it-works .step p {
+            color: #d1d5db;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .feature-list,
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .steps::before {
+                display: none;
+            }
+            
+            .section-title h3 {
+                font-size: 2rem;
+            }
+            
+            .feature-icon,
+            .step-icon {
+                display: none;
+            }
+        }
+        .choices {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .choice-btn {
+            background: linear-gradient(135deg, #7d1649 0%, #853b60 100%);
+            color: #fff;
+            font-style: italic;
+            padding: 12px 24px;
+            font-weight: bold;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            /* box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); */
+            backdrop-filter: blur(10px);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .choice-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            /* box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4); */
+            background: linear-gradient(135deg,  #7d1649 0%, #853b60 100%);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">VoxNova</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#">About</a></li>
+                    <li><a href="{{ url_for('register_page') }}">Register</a></li>
+                    <li><a href="#">Help</a></li>
+                    <li><a href="{{ url_for('morefeatures_page') }}">More features</a></li>
+                </ul>
+
+            </nav>
+        </div>
+    </header>
+            
+    <div class="container">
+        <section class="hero">
+            <div class="hero-image">
+
+            </div>
+            <h1>Welcome</h1>
+            <p class="hero-description">
+                Breaking communication barriers. Our innovative platform seamlessly converts sign language to text and text to sign language, empowering everyone to communicate. Connect hearts, bridge gaps, and unlock the power of universal communication.
+            </p>
+        </section>
+        
+        <section class="step">
+            <div class="stepheader">
+                <h2 class="title">Tell us about yourself</h2>
+                <p class="description">Choose the option that best describes your communication needs so we can provide the most suitable tools and resources.</p>
+            </div>
+
+            <div class="selection-deaf">
+                <div class="deaf">
+                    <div class="content">
+                        <span class="icon">👂🚫</span>
+                        <h3>I am Deaf</h3>
+                        <p>Access visual communication tools, sign language recognition, and text-based resources designed specifically for the deaf community. Convert spoken words to text and sign language.</p>
+                        <button class="choice-btn" onclick="window.location.href='{{ url_for('deaf_page') }}'">Get Started</button>
+
+                    </div>
+                </div>
+
+                <div class="selection-item mute">
+    <div class="content">
+        <span class="icon">🗣️🚫</span>
+        <h3>I am Mute</h3>
+        <p>Express yourself with text-to-speech tools, sign language to voice conversion, and alternative communication methods that give you a voice in every conversation.</p>
+        <button class="choice-btn" onclick="window.location.href='{{ url_for('mute') }}'">Get Started</button>
+    </div>
+</div>
+
+<div class="selection-item both">
+    <div class="selection-content">
+        <span class="icon">🤝</span>
+        <h3>Both Deaf & Mute</h3>
+        <p>Comprehensive communication suite combining visual, tactile, and digital tools. Full sign language to text conversion and advanced assistive technologies for complete communication freedom.</p>
+        <button class="choice-btn" onclick="window.location.href='{{ url_for('both_page') }}'">Get Started</button>
+    </div>
+</div>
+
+            </div>
+        </section>
+    </div>
+
+    <section id="features" class="features">
+    <div class="container">
+      <div class="section-title">
+        <h3>Features</h3>
+        <p>VoxNova offers a range of innovative features to facilitate seamless communication</p>
+      </div>
+      
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-hands"></i>
+          </div>
+          <h4>Sign Recognition</h4>
+          <p>Advanced AI that accurately interprets sign language gestures in real-time</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-language"></i>
+          </div>
+          <h4>Real-time Translation</h4>
+          <p>Instant conversion between sign language, text, and speech with minimal delay</p>
+        </div>
+        
+        <div class="feature-item">
+          <div class="feature-icon">
+            <i class="fas fa-volume-up"></i>
+          </div>
+          <h4>Speech Synthesis</h4>
+          <p>Natural sounding voice output in multiple regional languages and accents</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="how-it-works" class="how-it-works">
+    <div class="container">
+      <div class="section-title">
+        <h3>How It Works</h3>
+        <p>VoxNova makes communication accessible through a simple three-step process</p>
+      </div>
+      
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-icon">
+            <i class="fas fa-camera"></i>
+          </div>
+          <h4>Capture</h4>
+          <p>Use your camera to capture sign language gestures</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-icon">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h4>Process</h4>
+          <p>Our AI analyzes and translates the gestures</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-icon">
+            <i class="fas fa-comment-dots"></i>
+          </div>
+          <h4>Communicate</h4>
+          <p>Receive output as text or natural speech</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#terms">Terms of Service</a>
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#support">Support Center</a>
+                <a href="#contact">Contact Us</a>
+            </div>
+            <div class="copyright">
+                <p>© 2025 VoxNova. Making communication accessible for everyone.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

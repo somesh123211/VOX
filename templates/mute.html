@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoxNova - Mute Mode</title>
+  
+</head>
+<style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
+  color: #e2e8f0;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Header Styles */
+header {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 1rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  color: #22c55e;
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+}
+
+.logo h1 {
+  color: #f1f5f9;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+nav a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+nav a:hover {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-left: 3px solid #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+/* Back Button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 12px 20px;
+  margin: 2rem 0;
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  color: #22c55e;
+  border-left: 3px solid #22c55e;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.25);
+  transform: translateY(-2px);
+}
+
+/* Main Content Layout */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+/* Sign Recognition Section */
+.sign-recognition {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4b5563;
+  height: fit-content;
+}
+
+.sign-recognition h2 {
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.4rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sign-recognition h2 i {
+  color: #22c55e;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.sign-recognition p {
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* Video Container */
+.video-container {
+  width: 100%;
+  height: 400px;
+  background: #0f172a;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border: 2px solid #475569;
+  position: relative;
+}
+
+#camera {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #1e293b;
+}
+
+.video-container::before {
+  content: "Camera Feed";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #64748b;
+  font-size: 0.9rem;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Sign Output */
+.sign-output {
+  background: #0f172a;
+  padding: 16px;
+  border-radius: 8px;
+  color: #e2e8f0;
+  border-left: 4px solid #334155;
+  margin-bottom: 1rem;
+  font-family: 'Courier New', monospace;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+/* Buttons */
+.btn {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+  border-left: 3px solid transparent;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #22c55e, #059669);
+  border-left: 3px solid #4ade80;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #374151, #1f2937);
+  color: #cbd5e1;
+  border: 2px solid #475569;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+  border-left: 3px solid #22c55e;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.2);
+  color: #e2e8f0;
+}
+
+/* Info Panel */
+.info-panel {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4b5563;
+  height: fit-content;
+}
+
+.info-panel h3 {
+  color: #f1f5f9;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.2rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.info-panel h3 i {
+  color: #22c55e;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
+}
+
+.info-panel p {
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.feature-list {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.feature-list li {
+  color: #cbd5e1;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feature-list li i {
+  color: #10b981;
+  font-size: 1.1rem;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  padding: 3rem 0 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid #4b5563;
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #22c55e;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.footer-content p {
+  color: #cbd5e1;
+  margin-bottom: 2rem;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.footer-links a:hover {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-left: 3px solid #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.copyright {
+  color: #64748b;
+  font-size: 0.9rem;
+  padding-top: 1rem;
+  border-top: 1px solid #374151;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .video-container {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  nav ul {
+    gap: 1rem;
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .sign-recognition {
+    padding: 1.5rem;
+  }
+  
+  .info-panel {
+    padding: 1.5rem;
+  }
+  
+  .video-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .sign-recognition {
+    padding: 1rem;
+  }
+  
+  .info-panel {
+    padding: 1rem;
+  }
+  
+  .video-container {
+    height: 250px;
+  }
+}
+
+/* Font Awesome CDN fallback styles */
+.fas {
+  font-family: "Font Awesome 6 Free", Arial, sans-serif;
+  font-weight: 900;
+}
+
+.far {
+  font-family: "Font Awesome 6 Free", Arial, sans-serif;
+  font-weight: 400;
+}
+</style>
+<body>
+  <div class="main-content">
+    <!-- Sign Recognition Section -->
+    <div class="sign-recognition">
+      <h2><i class="fas fa-sign-language"></i> Sign Recognition</h2>
+      <p>Point your camera, and VoxNova will translate your signs (Demo Mode)</p>
+      
+      <div class="video-container">
+        <video id="camera" autoplay playsinline></video>
+      </div>
+      
+      <div class="sign-output" id="signOutput">Waiting for input...</div>
+      
+      <button class="btn" onclick="toggleCamera()" id="cameraToggle">
+        <i class="fas fa-camera"></i> Enable Camera
+      </button>
+    </div>
+    
+    <!-- Info Panel -->
+    <div class="info-panel">
+      <h3><i class="fas fa-lightbulb"></i> How to Use Mute Mode</h3>
+      <p>This mode helps people who are mute or have speech difficulties by recognizing sign language and converting it to text.</p>
+      
+      <h3><i class="fas fa-star"></i> Features</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Real-time sign language recognition</li>
+        <li><i class="fas fa-check-circle"></i> Multiple sign support</li>
+        <li><i class="fas fa-check-circle"></i> Copy to clipboard functionality</li>
+        <li><i class="fas fa-check-circle"></i> Speech synthesis for feedback</li>
+      </ul>
+      
+      <h3><i class="fas fa-cog"></i> Tips for Best Results</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Ensure good lighting conditions</li>
+        <li><i class="fas fa-check-circle"></i> Keep your hands visible to the camera</li>
+        <li><i class="fas fa-check-circle"></i> Make clear and distinct signs</li>
+        <li><i class="fas fa-check-circle"></i> Position yourself at a reasonable distance from the camera</li>
+      </ul>
+      
+      <h3><i class="fas fa-hands"></i> Supported Signs</h3>
+      <ul class="feature-list">
+        <li><i class="fas fa-check-circle"></i> Hello</li>
+        <li><i class="fas fa-check-circle"></i> Thank You</li>
+        <li><i class="fas fa-check-circle"></i> Yes/No</li>
+        <li><i class="fas fa-check-circle"></i> Goodbye</li>
+        <li><i class="fas fa-check-circle"></i> Help</li>
+        <li><i class="fas fa-check-circle"></i> Please</li>
+        <li><i class="fas fa-check-circle"></i> Sorry</li>
+        <li><i class="fas fa-check-circle"></i> Water</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-logo">VoxNova</div>
+      <p>Breaking down communication barriers with AI technology</p>
+      
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Support</a>
+      </div>
+      
+      <div class="copyright">
+        &copy; 2023 VoxNova. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+const video = document.getElementById("camera");
+const signOutput = document.getElementById("signOutput");
+
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => {
+    video.srcObject = stream;
+    video.play();
+    setInterval(sendFrame, 1000); // send frame every 1 second
+  })
+  .catch(err => {
+    console.error("Camera error:", err);
+    signOutput.textContent = "Camera access denied";
+  });
+
+function sendFrame() {
+  if (video.readyState < 2) return;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  canvas.toBlob(blob => {
+    const formData = new FormData();
+    formData.append("frame", blob, "frame.jpg");
+
+    fetch("/sign_to_text", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.word) {
+        signOutput.textContent = "Recognized: " + data.word;
+      } else {
+        signOutput.textContent = "No sign detected";
+      }
+    })
+    .catch(err => {
+      console.error("Backend error:", err);
+      signOutput.textContent = "Error connecting to backend";
+    });
+  }, "image/jpeg");
+}
+  </script>
+</body>
+</html>
