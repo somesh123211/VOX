@@ -420,7 +420,7 @@ footer {
       
       <div class="sign-output" id="signOutput">Waiting for input...</div>
       
-      <button class="btn" onclick="toggleCamera()" id="cameraToggle">
+      <button class="btn" id="cameraToggle">
         <i class="fas fa-camera"></i> Enable Camera
       </button>
     </div>
@@ -480,51 +480,94 @@ footer {
   </footer>
 
   <script>
-const video = document.getElementById("camera");
-const signOutput = document.getElementById("signOutput");
+    const video = document.getElementById("camera");
+    const signOutput = document.getElementById("signOutput");
+    const cameraToggle = document.getElementById("cameraToggle");
 
-navigator.mediaDevices.getUserMedia({ video: true })
-  .then(stream => {
-    video.srcObject = stream;
-    video.play();
-    setInterval(sendFrame, 1000); // send frame every 1 second
-  })
-  .catch(err => {
-    console.error("Camera error:", err);
-    signOutput.textContent = "Camera access denied";
-  });
+    let stream = null;
+    let intervalId = null;
+    let cameraEnabled = false;
 
-function sendFrame() {
-  if (video.readyState < 2) return;
+    // Start camera
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        video.play();
 
-  const canvas = document.createElement("canvas");
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        intervalId = setInterval(sendFrame, 1000); // send frame every second
 
-  canvas.toBlob(blob => {
-    const formData = new FormData();
-    formData.append("frame", blob, "frame.jpg");
-
-    fetch("/sign_to_text", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.word) {
-        signOutput.textContent = "Recognized: " + data.word;
-      } else {
-        signOutput.textContent = "No sign detected";
+        cameraEnabled = true;
+        cameraToggle.innerHTML = '<i class="fas fa-camera-slash"></i> Disable Camera';
+        signOutput.textContent = "Camera enabled - showing recognition...";
+      } catch (err) {
+        console.error("Camera error:", err);
+        signOutput.textContent = "Camera access denied";
       }
-    })
-    .catch(err => {
-      console.error("Backend error:", err);
-      signOutput.textContent = "Error connecting to backend";
-    });
-  }, "image/jpeg");
-}
+    }
+
+    // Stop camera
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop()); // ✅ stops webcam
+        video.srcObject = null; // ✅ clear video
+        stream = null;
+      }
+
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+
+      cameraEnabled = false;
+      cameraToggle.innerHTML = '<i class="fas fa-camera"></i> Enable Camera';
+      signOutput.textContent = "Camera disabled";
+    }
+
+    // Toggle camera
+    function toggleCamera() {
+      if (cameraEnabled) {
+        stopCamera();
+      } else {
+        startCamera();
+      }
+    }
+
+    // Send frame to backend
+    function sendFrame() {
+      if (!cameraEnabled || video.readyState < 2) return;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append("frame", blob, "frame.jpg");
+
+        fetch("/sign_to_text", {
+          method: "POST",
+          body: formData
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.word) {
+              signOutput.textContent = "Recognized: " + data.word;
+            } else {
+              signOutput.textContent = "No sign detected";
+            }
+          })
+          .catch(err => {
+            console.error("Backend error:", err);
+            signOutput.textContent = "Error connecting to backend";
+          });
+      }, "image/jpeg");
+    }
+
+    // Attach event to button
+    cameraToggle.addEventListener("click", toggleCamera);
   </script>
 </body>
 </html>

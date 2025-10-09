@@ -476,7 +476,7 @@ footer {
     <a href="index.html" class="back-btn">
       <i class="fas fa-arrow-left"></i> Back to Home
     </a>
-    
+
     <div class="main-content">
       <!-- Speech to Text Box -->
       <div class="box">
@@ -492,11 +492,11 @@ footer {
           <i class="fas fa-info-circle"></i> Your speech will appear here as text.
         </div>
       </div>
-      
+
       <!-- Text to Speech Box -->
       <div class="box">
         <h2><i class="fas fa-volume-up"></i> Text to Speech</h2>
-        
+
         <div class="language-selector">
           <label for="languageSelect">Select Language:</label>
           <select id="languageSelect">
@@ -505,7 +505,7 @@ footer {
             <option value="mr">Marathi</option>
           </select>
         </div>
-        
+
         <textarea id="textInput" placeholder="Type your message here..."></textarea>
         <button class="btn" onclick="convertToSpeech()">
           <i class="fas fa-play"></i> Convert to Speech
@@ -516,14 +516,15 @@ footer {
         <div class="output" id="ttsOutput">
           <i class="fas fa-info-circle"></i> Your converted speech will appear here.
         </div>
+        <div class="output" id="translatedOutput"></div>
       </div>
     </div>
-    
+
     <!-- Info Panel -->
     <div class="info-panel">
       <h3><i class="fas fa-lightbulb"></i> How to Use Deaf Mode</h3>
       <p>This mode helps people who are deaf or hard of hearing by converting speech to text and text to speech with multiple language support.</p>
-      
+
       <h3><i class="fas fa-star"></i> Features</h3>
       <ul class="feature-list">
         <li><i class="fas fa-check-circle"></i> Real-time speech recognition</li>
@@ -532,7 +533,7 @@ footer {
         <li><i class="fas fa-check-circle"></i> Easy language switching</li>
         <li><i class="fas fa-check-circle"></i> Copy to clipboard functionality</li>
       </ul>
-      
+
       <h3><i class="fas fa-cog"></i> Tips for Best Results</h3>
       <ul class="feature-list">
         <li><i class="fas fa-check-circle"></i> Speak clearly and at a moderate pace</li>
@@ -548,25 +549,27 @@ footer {
     <div class="container footer-content">
       <div class="footer-logo">VoxNova</div>
       <p>Breaking down communication barriers with AI technology</p>
-      
       <div class="footer-links">
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
         <a href="#">Contact Us</a>
         <a href="#">Support</a>
       </div>
-      
       <div class="copyright">
         &copy; 2023 VoxNova. All rights reserved.
       </div>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script>
-    // Text to Speech functionality
-    function convertToSpeech() {
+    // -------------------------
+    // Text to Speech with Translation
+    // -------------------------
+    async function convertToSpeech() {
       const text = document.getElementById("textInput").value;
       const output = document.getElementById("ttsOutput");
+      const translatedOutput = document.getElementById("translatedOutput");
       const languageSelect = document.getElementById("languageSelect");
       const selectedLanguage = languageSelect.value;
 
@@ -575,49 +578,49 @@ footer {
         return;
       }
 
-      // Show text in output box
-      output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${text}"`;
+      try {
+        const res = await fetch("http://127.0.0.1:5000/translate_api", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: text, lang: selectedLanguage })
+        });
 
-      // Use browser TTS
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Set language based on selection
-      if (selectedLanguage === "hi") {
-        utterance.lang = "hi-IN";
-        output.innerHTML += "<br><i class='fas fa-language'></i> Language: Hindi";
-      } else if (selectedLanguage === "mr") {
-        utterance.lang = "mr-IN";
-        output.innerHTML += "<br><i class='fas fa-language'></i> Language: Marathi";
-      } else {
-        utterance.lang = "en-US";
-        output.innerHTML += "<br><i class='fas fa-language'></i> Language: English";
-      }
-      
-      // Set up event listeners for speech events
-      utterance.onstart = function() {
-        output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${text}"`;
-        if (selectedLanguage === "hi") {
-          output.innerHTML += "<br><i class='fas fa-language'></i> Language: Hindi";
-        } else if (selectedLanguage === "mr") {
-          output.innerHTML += "<br><i class='fas fa-language'></i> Language: Marathi";
-        } else {
-          output.innerHTML += "<br><i class='fas fa-language'></i> Language: English";
+        const data = await res.json();
+        if (data.error) {
+          output.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${data.error}`;
+          return;
         }
-      };
-      
-      utterance.onend = function() {
-        output.innerHTML += `<br><i class="fas fa-check-circle" style="color: var(--success);"></i> Finished speaking`;
-      };
-      
-      speechSynthesis.speak(utterance);
+
+        const translatedText = data.translated;
+        translatedOutput.innerHTML = `<i class="fas fa-language"></i> Translated: ${translatedText}`;
+        output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${translatedText}"`;
+
+        const utterance = new SpeechSynthesisUtterance(translatedText);
+        if (selectedLanguage === "hi") utterance.lang = "hi-IN";
+        else if (selectedLanguage === "mr") utterance.lang = "mr-IN";
+        else utterance.lang = "en-US";
+
+        utterance.onend = function () {
+          output.innerHTML += `<br><i class="fas fa-check-circle" style="color: var(--success);"></i> Finished speaking`;
+        };
+
+        speechSynthesis.speak(utterance);
+
+      } catch (err) {
+        console.error("Translation error:", err);
+        output.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Could not connect to translation service.`;
+      }
     }
-    
+
     function clearTtsText() {
       document.getElementById("textInput").value = "";
       document.getElementById("ttsOutput").innerHTML = '<i class="fas fa-info-circle"></i> Your converted speech will appear here.';
+      document.getElementById("translatedOutput").innerHTML = '';
     }
-    
-    // Speech to Text functionality
+
+    // -------------------------
+    // Speech to Text (STT)
+    // -------------------------
     const micButton = document.getElementById("micButton");
     const status = document.getElementById("status");
     const sttOutput = document.getElementById("sttOutput");
@@ -625,33 +628,32 @@ footer {
     let recognition;
     let isListening = false;
 
-    // Initialize speech recognition
     function initSpeechRecognition() {
       if ("webkitSpeechRecognition" in window) {
         recognition = new webkitSpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = true;
         recognition.lang = "en-US";
-        
-        recognition.onstart = function() {
+
+        recognition.onstart = function () {
           isListening = true;
           micButton.classList.add("active");
           status.innerHTML = "<i class='fas fa-circle' style='color: var(--error);'></i> Listening...";
         };
-        
-        recognition.onresult = function(event) {
+
+        recognition.onresult = function (event) {
           let transcript = "";
           for (let i = event.resultIndex; i < event.results.length; i++) {
             transcript += event.results[i][0].transcript;
           }
           sttOutput.innerHTML = transcript;
         };
-        
-        recognition.onerror = function(event) {
+
+        recognition.onerror = function (event) {
           status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error: " + event.error;
         };
-        
-        recognition.onend = function() {
+
+        recognition.onend = function () {
           isListening = false;
           micButton.classList.remove("active");
           status.innerHTML = "Press the microphone to start speaking...";
@@ -662,37 +664,28 @@ footer {
       }
     }
 
-    // Toggle speech recognition
     micButton.addEventListener("click", () => {
       if (!recognition) return;
-      
-      if (!isListening) {
-        recognition.start();
-      } else {
-        recognition.stop();
-      }
+      if (!isListening) recognition.start();
+      else recognition.stop();
     });
 
-    // Clear speech to text
     function clearSttText() {
       sttOutput.innerHTML = '<i class="fas fa-info-circle"></i> Your speech will appear here as text.';
       status.innerHTML = "Press the microphone to start speaking...";
     }
 
-    // Initialize on page load
-    window.addEventListener('load', initSpeechRecognition);
-    
-    // Add keyboard shortcut (Ctrl+Enter to convert text to speech)
-    document.addEventListener('DOMContentLoaded', function() {
+    // Keyboard shortcut: Ctrl+Enter
+    document.addEventListener('DOMContentLoaded', () => {
       const textInput = document.getElementById("textInput");
       if (textInput) {
-        textInput.addEventListener("keydown", function(e) {
-          if (e.ctrlKey && e.key === "Enter") {
-            convertToSpeech();
-          }
+        textInput.addEventListener("keydown", (e) => {
+          if (e.ctrlKey && e.key === "Enter") convertToSpeech();
         });
       }
     });
+
+    // Initialize STT on page load
+    window.addEventListener('load', initSpeechRecognition);
   </script>
 </body>
-</html>
