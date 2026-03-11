@@ -5,10 +5,9 @@ import cv2
 import numpy as np
 import mediapipe as mp
 
-# 🔊 Translation + Voice (ONLY for deaf page)
+# 🔊 Translation + Voice
 from googletrans import Translator
 from gtts import gTTS
-from playsound import playsound
 import time
 import os
 
@@ -16,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 # -----------------------------
-# Translator (for deaf page)
+# Translator
 # -----------------------------
 translator = Translator()
 
@@ -43,7 +42,7 @@ hands = mp_hands.Hands(
 )
 
 # -----------------------------
-# ROUTES (UNCHANGED)
+# ROUTES
 # -----------------------------
 @app.route("/")
 def index_page():
@@ -70,7 +69,7 @@ def morefeatures_page():
     return render_template("morefeatures.html")
 
 # -----------------------------
-# SIGN → TEXT (UNCHANGED)
+# SIGN → TEXT
 # -----------------------------
 @app.route("/sign_to_text", methods=["POST"])
 def sign_to_text():
@@ -103,8 +102,9 @@ def sign_to_text():
 
     return jsonify({"word": "No sign detected"})
 
+
 # =====================================================
-# 🔊 DEAF PAGE: TEXT → TRANSLATE → VOICE (NEW)
+# TEXT → TRANSLATE → VOICE
 # =====================================================
 @app.route("/deaf_text_to_voice", methods=["POST"])
 def deaf_text_to_voice():
@@ -119,34 +119,32 @@ def deaf_text_to_voice():
     if language not in ["en", "hi", "mr"]:
         language = "en"
 
-    # ✅ NOW THIS WORKS (SYNC)
+    # Translate text
     try:
         translated_text = translator.translate(text, dest=language).text
     except Exception as e:
         print("Translation error:", e)
         translated_text = text
 
-    # 🔊 Speak
+    # Generate voice file
     try:
+        filename = f"static/voice_{int(time.time())}.mp3"
         tts = gTTS(text=translated_text, lang=language, slow=False)
-        filename = f"voice_{int(time.time())}.mp3"
         tts.save(filename)
-        playsound(filename)
-        os.remove(filename)
     except Exception as e:
         print("Speech error:", e)
+        filename = None
 
     return jsonify({
         "original": text,
-        "translated": translated_text
+        "translated": translated_text,
+        "audio": filename
     })
 
 
 # -----------------------------
 # Run Flask
 # -----------------------------
-import os
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
