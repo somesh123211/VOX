@@ -563,129 +563,126 @@ footer {
 
   <!-- Scripts -->
   <script>
-    // -------------------------
-    // Text to Speech with Translation
-    // -------------------------
-    async function convertToSpeech() {
-      const text = document.getElementById("textInput").value;
-      const output = document.getElementById("ttsOutput");
-      const translatedOutput = document.getElementById("translatedOutput");
-      const languageSelect = document.getElementById("languageSelect");
-      const selectedLanguage = languageSelect.value;
+  // =====================================================
+  // TEXT TO SPEECH (BACKEND gTTS)
+  // =====================================================
+  async function convertToSpeech() {
+    const text = document.getElementById("textInput").value;
+    const output = document.getElementById("ttsOutput");
+    const translatedOutput = document.getElementById("translatedOutput");
+    const selectedLanguage = document.getElementById("languageSelect").value;
 
-      if (text.trim() === "") {
-        output.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please enter some text.';
+    if (!text.trim()) {
+      output.innerHTML = "❌ Please enter some text.";
+      return;
+    }
+
+    output.innerHTML = "⏳ Translating & speaking...";
+    translatedOutput.innerHTML = "";
+
+    try {
+      const res = await fetch("/deaf_text_to_voice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: text,
+          language: selectedLanguage
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        output.innerHTML = "❌ " + data.error;
         return;
       }
 
-      try {
-        const res = await fetch("http://127.0.0.1:5000/translate_api", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: text, lang: selectedLanguage })
-        });
+      translatedOutput.innerHTML =
+        "🌐 Translated: " + data.translated;
 
-        const data = await res.json();
-        if (data.error) {
-          output.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${data.error}`;
-          return;
-        }
+      output.innerHTML = "🔊 Speaking completed successfully";
 
-        const translatedText = data.translated;
-        translatedOutput.innerHTML = `<i class="fas fa-language"></i> Translated: ${translatedText}`;
-        output.innerHTML = `<i class="fas fa-volume-up"></i> Speaking: "${translatedText}"`;
+    } catch (err) {
+      console.error(err);
+      output.innerHTML = "❌ Server not reachable.";
+    }
+  }
 
-        const utterance = new SpeechSynthesisUtterance(translatedText);
-        if (selectedLanguage === "hi") utterance.lang = "hi-IN";
-        else if (selectedLanguage === "mr") utterance.lang = "mr-IN";
-        else utterance.lang = "en-US";
+  function clearTtsText() {
+    document.getElementById("textInput").value = "";
+    document.getElementById("ttsOutput").innerHTML =
+      "ℹ️ Your converted speech will appear here.";
+    document.getElementById("translatedOutput").innerHTML = "";
+  }
 
-        utterance.onend = function () {
-          output.innerHTML += `<br><i class="fas fa-check-circle" style="color: var(--success);"></i> Finished speaking`;
-        };
+  // =====================================================
+  // SPEECH TO TEXT (BROWSER – FIXED & RELIABLE)
+  // =====================================================
+  const micButton = document.getElementById("micButton");
+  const status = document.getElementById("status");
+  const sttOutput = document.getElementById("sttOutput");
 
-        speechSynthesis.speak(utterance);
+  let recognition;
+  let isListening = false;
 
-      } catch (err) {
-        console.error("Translation error:", err);
-        output.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Could not connect to translation service.`;
-      }
+  function initSpeechRecognition() {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      status.innerText =
+        "❌ Speech Recognition not supported. Use Chrome or Edge.";
+      micButton.disabled = true;
+      return;
     }
 
-    function clearTtsText() {
-      document.getElementById("textInput").value = "";
-      document.getElementById("ttsOutput").innerHTML = '<i class="fas fa-info-circle"></i> Your converted speech will appear here.';
-      document.getElementById("translatedOutput").innerHTML = '';
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => {
+      isListening = true;
+      micButton.classList.add("active");
+      status.innerText = "🎙 Listening...";
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      sttOutput.innerText = transcript;
+
+      // ✅ OPTIONAL UX: auto-fill text box
+      document.getElementById("textInput").value = transcript;
+    };
+
+    recognition.onerror = (event) => {
+      status.innerText = "❌ Error: " + event.error;
+    };
+
+    recognition.onend = () => {
+      isListening = false;
+      micButton.classList.remove("active");
+      status.innerText = "Press the microphone to start speaking...";
+    };
+  }
+
+  micButton.addEventListener("click", () => {
+    if (!recognition) return;
+
+    if (!isListening) {
+      recognition.start();
+    } else {
+      recognition.stop();
     }
+  });
 
-    // -------------------------
-    // Speech to Text (STT)
-    // -------------------------
-    const micButton = document.getElementById("micButton");
-    const status = document.getElementById("status");
-    const sttOutput = document.getElementById("sttOutput");
+  function clearSttText() {
+    sttOutput.innerHTML =
+      "ℹ️ Your speech will appear here as text.";
+    status.innerText = "Press the microphone to start speaking...";
+  }
 
-    let recognition;
-    let isListening = false;
+  window.addEventListener("load", initSpeechRecognition);
+</script>
 
-    function initSpeechRecognition() {
-      if ("webkitSpeechRecognition" in window) {
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = "en-US";
-
-        recognition.onstart = function () {
-          isListening = true;
-          micButton.classList.add("active");
-          status.innerHTML = "<i class='fas fa-circle' style='color: var(--error);'></i> Listening...";
-        };
-
-        recognition.onresult = function (event) {
-          let transcript = "";
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
-          }
-          sttOutput.innerHTML = transcript;
-        };
-
-        recognition.onerror = function (event) {
-          status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Error: " + event.error;
-        };
-
-        recognition.onend = function () {
-          isListening = false;
-          micButton.classList.remove("active");
-          status.innerHTML = "Press the microphone to start speaking...";
-        };
-      } else {
-        status.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Your browser does not support Speech Recognition. Try Chrome or Edge.";
-        micButton.disabled = true;
-      }
-    }
-
-    micButton.addEventListener("click", () => {
-      if (!recognition) return;
-      if (!isListening) recognition.start();
-      else recognition.stop();
-    });
-
-    function clearSttText() {
-      sttOutput.innerHTML = '<i class="fas fa-info-circle"></i> Your speech will appear here as text.';
-      status.innerHTML = "Press the microphone to start speaking...";
-    }
-
-    // Keyboard shortcut: Ctrl+Enter
-    document.addEventListener('DOMContentLoaded', () => {
-      const textInput = document.getElementById("textInput");
-      if (textInput) {
-        textInput.addEventListener("keydown", (e) => {
-          if (e.ctrlKey && e.key === "Enter") convertToSpeech();
-        });
-      }
-    });
-
-    // Initialize STT on page load
-    window.addEventListener('load', initSpeechRecognition);
-  </script>
 </body>

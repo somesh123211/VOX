@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>STT Test</h2>
+  <button onclick="start()">🎙 Start</button>
+  <p id="out"></p>
+
+  <script>
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Speech Recognition not supported. Use Chrome.");
+    }
+
+    const rec = new SpeechRecognition();
+    rec.lang = "en-US";
+
+    rec.onresult = (e) => {
+      document.getElementById("out").innerText =
+        e.results[0][0].transcript;
+    };
+
+    rec.onerror = (e) => {
+      alert("Error: " + e.error);
+    };
+
+    function start() {
+      rec.start();
+    }
+  </script>
+</body>
+</html>
